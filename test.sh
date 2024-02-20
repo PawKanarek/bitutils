@@ -1,6 +1,6 @@
 #!/bin/bash
-REPO_DIR='data-universe'
-CONDA_ENV='vdu'
+repo_dir='finetuning-subnet'
+conda_env='finetune'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 RED='\033[0;31m'
@@ -14,51 +14,72 @@ print_error() {
     echo -e "${RED}--- $1${NC}"
 }
 
-### Clone the repo 
-if [ ! -d "$REPO_DIR" ]; then
-    print 'cloning the github repo'
-    git clone git@github.com:RusticLuftig/data-universe.git
+
+### Clone the subtensor repo 
+if [ ! -d "$subtensor_dir" ]; then
+    print 'cloning the subtensor repo'
+    git clone git@github.com:opentensor/subtensor.git
 fi
 
-cd "$REPO_DIR"
+print 'cd $subtensor_dir'
+cd "$subtensor_dir"
+docker compose up --detach
+
+# install rust https://docs.substrate.io/install/linux/
+# print install rust dependencies
+
+# sudo apt install build-essential
+# clang curl git make
+# sudo apt install --assume-yes git clang curl libssl-dev protobuf-compiler
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# source $HOME/.cargo/env
+
+# print verify
+# rustc --version
+
+# print configure latest Rust toolchain
+# rustup default stable
+# rustup update
+
+# print add nightly 
+# rustup update nightly
+# rustup target add wasm32-unknown-unknown --toolchain nightly
+
+# print verify
+# rustup show
+# rustup +nightly show
+
+# https://docs.docker.com/desktop/install/ubuntu/
+# DOCKER
+# print "uninstall old docker"
+# for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+# sudo apt install gnome-terminal
+
+# print "add docker keys docker"
+
+# # Add Docker's official GPG key:
+# sudo apt-get update
+# sudo apt-get install ca-certificates curl
+# sudo install -m 0755 -d /etc/apt/keyrings
+# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+# sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# # Add the repository to Apt sources:
+# echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+#   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt-get update
 
 
-### Conda stuff 
-if ! command -v conda &> /dev/null; then
-    print "Conda is not installed. Installing..."
-    # Download and install Miniconda
-    mkdir -p $HOME/miniconda3
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/miniconda3/miniconda.sh
-    bash $HOME/miniconda3/miniconda.sh -b -u -p $HOME/miniconda3/
-    rm $HOME/miniconda3/miniconda.sh
-    $HOME/miniconda3/bin/conda init bash
-    print "Conda is installed."
-    
-    print "Restart bash with command source ~/.bashrc, and run this script again"
-    exec bash
-fi
+# wget -O ./docker-desktop-4.27.2-amd64.deb https://desktop.docker.com/linux/main/amd64/137060/docker-desktop-4.27.2-amd64.deb
+# sudo apt-get update
+# sudo apt-get install ./docker-desktop-4.27.2-amd64.deb
 
-if ! command -v conda &> /dev/null; then
-    print_error "Cannot find conda. If problem persist, install conda manually."
-    exit 1
-fi
+# systemctl --user start docker-desktop
 
-print "Conda init" 
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)" # without this I get strange errors when activating conda envs
-print "Current conda env is ($CONDA_DEFAULT_ENV)"
-
-if conda info --envs | grep -q "\b$CONDA_ENV\b"; then
-    print "Conda environment '$CONDA_ENV' already exists."
-else
-    print "Creating conda environment $CONDA_ENV ..."
-    conda create -n $CONDA_ENV python=3.10
-fi
-
-print "Activate conda env $CONDA_ENV ..."
-conda activate $CONDA_ENV
-print "current env is $CONDA_DEFAULT_ENV"
-
-if [ "$CONDA_DEFAULT_ENV" != "blabla" ]; then
-    print "Conda did not activate correct enviroment. Exiting."
-    exit 1 
-fi
+# # install Docker Compose 
+# sudo apt-get update
+# sudo apt-get install docker-compose-plugin
+# print "verify docker compose"
+# docker compose version

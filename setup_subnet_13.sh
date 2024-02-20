@@ -36,3 +36,4 @@ conda activate $REPO_DIR
 
 print "Instaling required dependencies"
 pip install -r requirements.txt
+
