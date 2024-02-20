@@ -1,6 +1,6 @@
 #!/bin/bash
-REPO_DIR='data-universe'
-CONDA_ENV='vdu'
+REPO_DIR='commune'
+CONDA_ENV='commune'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 RED='\033[0;31m'
@@ -17,10 +17,11 @@ print_error() {
 ### Clone the repo 
 if [ ! -d "$REPO_DIR" ]; then
     print 'cloning the github repo'
-    git clone git@github.com:RusticLuftig/data-universe.git
+    git clone git@github.com:commune-ai/commune.git
 fi
 
 cd "$REPO_DIR"
+git submodule update --init --recursive --force
 
 
 ### Conda stuff 
@@ -58,7 +59,13 @@ print "Activate conda env $CONDA_ENV ..."
 conda activate $CONDA_ENV
 print "current env is $CONDA_DEFAULT_ENV"
 
-if [ "$CONDA_DEFAULT_ENV" != "blabla" ]; then
+if [ "$CONDA_DEFAULT_ENV" != "$CONDA_ENV" ]; then
     print "Conda did not activate correct enviroment. Exiting."
     exit 1 
 fi
+
+pip install -e ./
+
+chmod +x ./scripts/* # make sure the scripts are executable
+sudo ./scripts/install_npm_env.sh # install npm and pm2 (sudo may not be required)
+c modules
