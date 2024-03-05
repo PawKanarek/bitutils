@@ -36,9 +36,6 @@ activate_conda() {
     else
         print "Creating conda environment $conda_env ..."
         conda create -n $conda_env python=3.10
-
-        git clone git@github.com:opentensor/bittensor.git
-        python -m pip install -e bittensor/
     fi
 
     print "Activate conda env $conda_env ..."
