@@ -1,14 +1,32 @@
 #!/bin/bash
+source print.sh
+source activate_conda.sh
 
-# remove all containers
-docker stop $(docker ps -a -q)
-docker rm $(docker ps -a -q)
+activate_conda "bittensor"
 
-# remove all images 
-docker rmi $(docker images -a -q)
+print "Remove all containers"
+if [ "$(docker ps -a -q)" ]; then
+    docker stop $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
+else
+    print "No containers to remove"
+fi
 
-# remove all volumes 
-docker volume rm $(docker volume ls -q)
 
-# remove networks 
+print "Remove all images"
+if [ "$(docker images -a -q)" ]; then
+    docker rmi $(docker images -a -q)
+else
+    print "No images to remove"
+fi
+
+print "Remove all volumes"
+if [ "$(docker volume ls -q)" ]; then
+    docker volume rm $(docker volume ls -q)
+else
+    print "No volumes to remove"
+fi
+
+
+print "Remove networks"
 docker network prune

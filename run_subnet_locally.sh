@@ -1,26 +1,11 @@
 #!/bin/bash
+source print.sh
+source activate_conda.sh
 
 # bit tensor docs https://github.com/opentensor/bittensor#install
-
 subtensor_dir='subtensor'
 conda_env='bittensor'
-
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-
-print() {
-    echo -e "${CYAN}--- $1${NC}"
-}
-
-print_error() {
-    echo -e "${RED}--- $1${NC}"
-}
-
-# CONDA 
 activate_conda $conda_env
-
 
 # https://docs.docker.com/desktop/install/ubuntu/
 # ---- DOCKER
