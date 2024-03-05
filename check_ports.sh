@@ -1,6 +1,46 @@
 #!/bin/bash
 
-# This is a simple script to verify network requirements for Subtensor.
+# Ensure script is run as root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root." 
+   exit 1
+fi
+
+# Install UFW if it's not already installed
+if ! command -v ufw &>/dev/null; then
+    echo "UFW not found. Installing UFW."
+    apt-get update
+    apt-get install -y ufw
+fi
+
+# Enable UFW if it's not already enabled
+if ufw status | grep -q "inactive"; then
+    echo "Enabling UFW."
+    ufw --force enable
+fi
+
+# Setting up default rules
+echo "Setting up default UFW rules."
+ufw default deny incoming
+ufw default allow outgoing
+
+# Allow incoming traffic to 30333 (Subtensor p2p)
+echo "Allowing incoming traffic on TCP port 30333."
+ufw allow 30333/tcp
+
+# Allow loopback to 9944 (Websocket)
+echo "Allowing loopback on TCP port 9944."
+ufw allow in on lo to any port 9944
+
+# Deny public access to 9944
+echo "Blocking public access to TCP port 9944."
+ufw deny in to any port 9944
+
+# Reload UFW to apply changes
+ufw reload
+
+# Checks
+echo "Checking network configurations..."
 
 # Check Internet connectivity
 if ping -c 1 8.8.8.8 &>/dev/null; then
@@ -18,43 +58,20 @@ else
     exit 1
 fi
 
-# Check if port 9944 is listening on localhost only
-if netstat -tuln | grep "127.0.0.1:9944" &>/dev/null; then
-    echo "Port 9944 is listening on localhost."
-else
-    echo "Port 9944 is not listening on localhost or is not active."
-fi
+# Check if ports are listening
+check_port() {
+    if ss -tuln | grep ":$1" &>/dev/null; then
+        echo "Port $1 is listening."
+    else
+        echo "Port $1 is not listening."
+    fi
+}
 
-# Make sure port 9944 is firewalled off from the public domain
-if sudo ufw status | grep "9944" | grep -w "REJECT" &>/dev/null; then
-    echo "Port 9944 is firewalled from the public domain."
-else
-    echo "Port 9944 may be exposed to the public domain. Please check your firewall settings."
-fi
+check_port 9944
+check_port 9933
+check_port 30333
 
-# Check if port 9933 is open
-if netstat -tuln | grep ":9933" &>/dev/null; then
-    echo "Port 9933 is open."
-else
-    echo "Port 9933 is not open. Please check your network configuration."
-fi
-
-# Check if port 30333 accepts incoming connections
-# This cannot be reliably automated as it depends on external nodes trying to connect.
-# Instead, we only check if the port is listening.
-if netstat -tuln | grep ":30333" &>/dev/null; then
-    echo "Port 30333 is listening for incoming connections."
-else
-    echo "Port 30333 is not open for incoming connections. Please check your network configuration."
-fi
-
-# Verify outbound traffic to port 30333 is allowed
-# This check assumes that the UFW (Uncomplicated Firewall) is used and the default policy is to ACCEPT.
-# If a different firewall is used, this check must be adjusted accordingly.
-if sudo ufw status verbose | grep "Anywhere" | grep "30333" | grep -wv "DENY" &>/dev/null; then
-    echo "Outbound traffic to port 30333 is allowed."
-else
-    echo "Outbound traffic to port 30333 might be blocked. Please check your firewall settings."
-fi
+echo "Firewall status:"
+ufw status verbose
 
 echo "Network checks completed."
