@@ -43,10 +43,10 @@ main(){
             break
         fi
         # SKEETCHY
-        sleep 30
+        sleep 60
         COLD_KEY_PASS
-        sleep 30
         counter=$((counter+1))
+        sleep 120
     done
     
 }
