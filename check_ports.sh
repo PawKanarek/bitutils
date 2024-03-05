@@ -1,4 +1,7 @@
+
 #!/bin/bash
+# usage? 
+# sudo bash subtensor_network_setup.sh
 
 # Ensure script is run as root
 if [[ $EUID -ne 0 ]]; then
@@ -28,13 +31,18 @@ ufw default allow outgoing
 echo "Allowing incoming traffic on TCP port 30333."
 ufw allow 30333/tcp
 
-# Allow loopback to 9944 (Websocket)
-echo "Allowing loopback on TCP port 9944."
-ufw allow in on lo to any port 9944
-
-# Deny public access to 9944
+# Block and then allow loopback to 9944 (Websocket)
 echo "Blocking public access to TCP port 9944."
 ufw deny in to any port 9944
+
+echo "Allowing loopback on TCP port 9944."
+ufw allow from 127.0.0.1 to any port 9944
+ufw allow from ::1 to any port 9944
+
+# Add rules for RPC port 9933 if required to allow it on loopback
+echo "Allowing loopback on TCP port 9933."
+ufw allow from 127.0.0.1 to any port 9933
+ufw allow from ::1 to any port 9933
 
 # Reload UFW to apply changes
 ufw reload
