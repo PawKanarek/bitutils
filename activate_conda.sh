@@ -3,6 +3,7 @@ source print.sh
 
 activate_conda() {
     conda_env="$1"
+
     if [ -z "$1" ]; then
         print_error "Error: No envrionment name. Call this function with envrionment name" >&2
         exit 1
@@ -16,7 +17,7 @@ activate_conda() {
         rm $HOME/miniconda3/miniconda.sh
         $HOME/miniconda3/bin/conda init bash
         print "Conda is installed."
-        print "Restart bash with command source ~/.bashrc, and run this script again"
+        print_error "Restart bash with command source ~/.bashrc, and run this script again"
         exec bash
         exit 1
     fi
@@ -27,7 +28,7 @@ activate_conda() {
     fi
 
     print "Conda init" 
-    eval "$($HOME/miniconda3/bin/conda shell.bash hook)" # without this I get strange errors when activating conda envs
+    eval "$(conda shell.bash hook)" # without this I get strange errors when activating conda envs
     print "Current conda env is ($CONDA_DEFAULT_ENV)"
 
     if conda info --envs | grep -q "\b$conda_env\b"; then
@@ -45,7 +46,7 @@ activate_conda() {
     print "current env is $CONDA_DEFAULT_ENV"
 
     if [ "$CONDA_DEFAULT_ENV" != "$conda_env" ]; then
-        print "Conda did not activate correct enviroment. Exiting."
+        print_error "Conda did not activate correct enviroment. Exiting."
         exit 1 
     fi
 }

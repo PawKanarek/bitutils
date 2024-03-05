@@ -1,85 +1,69 @@
 #!/bin/bash
+source print.sh
+source activate_conda.sh
 
 # Ensure script is run as root
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root." 
+   print "This script must be run as root." 
    exit 1
 fi
 
+activate_conda "bittensor"
 
 # Install UFW if it's not already installed
 if ! command -v ufw &>/dev/null; then
-    echo "UFW not found. Installing UFW."
+    print "UFW not found. Installing UFW."
     apt-get update
     apt-get install -y ufw
 fi
 
-# Enable UFW if it's not already enabled
-if ufw status | grep -q "inactive"; then
-    echo "Enabling UFW."
-    ufw --force enable
-fi
-
-# Setting up default rules
-echo "Setting up default UFW rules."
+print "Setting up default outgoing traffic policy to ACCEPT and DENY incoming"
 ufw default deny incoming
 ufw default allow outgoing
 
-# Allow incoming traffic to 30333 (Subtensor p2p)
-#   echo "Allowing incoming traffic on TCP port 30333."
-# ufw allow 30333/tcp
+print "9944 - Websocket. This port is used by bittensor. It only accepts connections from localhost."
+ufw allow from 127.0.0.1 to any port 9944
 
-# allow ssh
-echo "Allow ssh"
-sudo ufw allow ssh
+print "30333 - p2p socket. This port accepts connections from other subtensor nodes."
+ufw allow 30333/tcp
 
-# Block and then allow loopback to 9944 (Websocket)
-# echo "Blocking public access to TCP port 9944."
-# ufw deny in to any port 9944
+print "9933 - RPC. This port is opened, but not used"
+ufw allow 9933/tcp
 
-# echo "Allowing loopback on TCP port 9944."
-# ufw allow from 127.0.0.1 to any port 9944
-# ufw allow from ::1 to any port 9944
+print "Allow ssh"
+ufw allow ssh
 
-# Add rules for RPC port 9933 if required to allow it on loopback
-# echo "Allowing loopback on TCP port 9933."
-# ufw allow from 127.0.0.1 to any port 9933
-# ufw allow from ::1 to any port 9933
+print "Enable the firewall" 
+ufw enable
 
-# sudo ufw allow from 127.0.0.1 to any port 9946
-# sudo ufw allow from ::1 to any port 9946
-
-# sudo ufw allow from 127.0.0.1 to any port 9947
-# sudo ufw allow from ::1 to any port 9947
-
-# Reload UFW to apply changes
+print "Reload the firewall rules"
 ufw reload
 
 # Checks
-echo "Checking network configurations..."
+print "Checking network configurations..."
 
 # Check Internet connectivity
 if ping -c 1 8.8.8.8 &>/dev/null; then
-    echo "Internet connectivity is available."
+    print "Internet connectivity is available."
 else
-    echo "Internet connectivity check failed."
+    print_error "Internet connectivity check failed."
     exit 1
 fi
 
 # Verify IPv4 is enabled (we'll just check if the system has IPv4 addresses)
 if ip -4 addr show &>/dev/null; then
-    echo "IPv4 is enabled."
+    print "IPv4 is enabled."
 else
-    echo "IPv4 is not enabled. Please check your network configuration."
+    print_error "IPv4 is not enabled. Please check your network configuration."
     exit 1
 fi
 
 # Check if ports are listening
 check_port() {
     if ss -tuln | grep ":$1" &>/dev/null; then
-        echo "Port $1 is listening."
+        print "Port $1 is listening."
     else
-        echo "Port $1 is not listening."
+        print_error "Port $1 is not listening."
     fi
 }
 
@@ -87,7 +71,7 @@ check_port 9944
 check_port 9933
 check_port 30333
 
-echo "Firewall status:"
+print "ufw status verbose"
 ufw status verbose
 
-echo "Network checks completed."
+print "Network checks completed."
