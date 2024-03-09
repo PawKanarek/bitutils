@@ -17,9 +17,7 @@ activate_conda() {
         rm $HOME/miniconda3/miniconda.sh
         $HOME/miniconda3/bin/conda init bash
         print "Conda is installed."
-        print_error "Restart bash with command source ~/.bashrc, and run this script again"
-        exec bash
-        exit 1
+        source $HOME/.bashrc
     fi
 
     if ! command -v conda &> /dev/null; then
