@@ -1,4 +1,7 @@
 ssh-keygen -t ed25519 -C "paw.kanarek@gmail.com"
+cat ~/.ssh/id_ed25519.pub
+https://github.com/settings/keys
+
 
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
