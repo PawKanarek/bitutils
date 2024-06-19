@@ -88,16 +88,16 @@ alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-alt-h = 'focus left'
+alt-d = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
-alt-l = 'focus right'
+alt-f = 'focus right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
-alt-shift-h = 'move left'
+alt-shift-d = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
-alt-shift-l = 'move right'
+alt-shift-f = 'move right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
 alt-shift-minus = 'resize smart -50'
@@ -174,7 +174,7 @@ alt-shift-p = 'move-node-to-monitor prev'
 alt-shift-n = 'move-node-to-monitor next'
 alt-p = 'focus-monitor prev'
 alt-n = 'focus-monitor next'
-alt-f = 'flatten-workspace-tree'
+#alt-f = 'flatten-workspace-tree'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
