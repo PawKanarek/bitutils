@@ -170,10 +170,10 @@ alt-shift-9 = 'move-node-to-workspace 9'
 # alt-shift-z = 'move-node-to-workspace Z'
 
 # my settings 
-alt-shift-p = 'move-node-to-monitor prev'
-alt-shift-n = 'move-node-to-monitor next'
-alt-p = 'focus-monitor prev'
-alt-n = 'focus-monitor next'
+alt-shift-w = 'move-node-to-monitor 2'
+alt-shift-q = 'move-node-to-monitor 1'
+alt-w = 'focus-monitor 2'
+alt-q = 'focus-monitor 1'
 #alt-f = 'flatten-workspace-tree'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
@@ -198,3 +198,13 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
+[workspace-to-monitor-force-assignment]
+1 = 1
+2 = 2
+3 = 2
+4 = 2
+5 = 2
+6 = 2
+7 = 2
+8 = 2
+9 = 2
